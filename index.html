@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formas de Comunicación Oral</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: Se ha diseñado una aplicación de una sola página con desplazamiento vertical y una barra de navegación fija. La estructura es temática, con una sección introductoria seguida de bloques dedicados a cada forma de comunicación (Documental, Coloquio, Conferencia, Congreso). El elemento central es un gráfico de radar interactivo que permite al usuario comparar dinámicamente las formas de comunicación según criterios clave (formalidad, interactividad, etc.). Esta estructura fue elegida porque facilita tanto la consulta rápida de una forma específica como el análisis comparativo, que es crucial para entender las sutiles diferencias. El flujo del usuario es simple: explorar libremente o usar la navegación para ir a un punto de interés, culminando en la herramienta interactiva que sintetiza y refuerza el aprendizaje. -->
+    <!-- Visualization & Content Choices: La información se presenta en tarjetas temáticas para aislar y clarificar cada concepto. Para la comparación, el objetivo es visualizar las diferencias y similitudes de manera efectiva. Se eligió un gráfico de radar de Chart.js (Canvas) porque es ideal para comparar múltiples sujetos (las formas de comunicación) a través de múltiples variables (características). La interacción consiste en activar/desactivar la visualización de cada forma en el gráfico, permitiendo al usuario controlar la comparación. Esta elección es superior a una tabla estática porque es más atractiva, dinámica y facilita la comprensión de relaciones complejas entre los conceptos. Se utilizan iconos de texto (Unicode) para añadir un identificador visual a cada sección. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #FDF8F0;
+            color: #3D405B;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 60vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #E07A5F;
+        }
+        .active-link {
+            color: #E07A5F;
+            border-bottom-color: #E07A5F;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#3D405B] text-white p-6 shadow-md text-center">
+        <h1 class="text-3xl md:text-4xl font-bold">Explorador de Formas de Comunicación Oral</h1>
+        <p class="mt-2 text-lg text-gray-300">Una guía interactiva para entender sus características y diferencias.</p>
+    </header>
+
+    <nav id="navbar" class="sticky top-0 bg-[#FDF8F0]/80 backdrop-blur-md z-10 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-center space-x-4 md:space-x-8 py-4">
+                <a href="#comparativa" class="nav-link text-sm md:text-base font-semibold border-b-2 border-transparent pb-1">Comparativa</a>
+                <a href="#documental" class="nav-link text-sm md:text-base font-semibold border-b-2 border-transparent pb-1">Documental</a>
+                <a href="#coloquio" class="nav-link text-sm md:text-base font-semibold border-b-2 border-transparent pb-1">Coloquio</a>
+                <a href="#conferencia" class="nav-link text-sm md:text-base font-semibold border-b-2 border-transparent pb-1">Conferencia</a>
+                <a href="#congreso" class="nav-link text-sm md:text-base font-semibold border-b-2 border-transparent pb-1">Congreso</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-4 md:p-8">
+
+        <section id="comparativa" class="pt-16 -mt-16 mb-12">
+            <h2 class="text-3xl font-bold text-center mb-4 text-[#3D405B]">Análisis Comparativo Interactivo</h2>
+            <p class="text-center text-lg mb-8 max-w-3xl mx-auto">
+                Utiliza los botones para añadir o quitar formas de comunicación del gráfico. Esto te permitirá comparar visualmente sus características clave, como el nivel de formalidad, la interacción con la audiencia, el número de ponentes y el tamaño del evento. Observa cómo cambian las formas en el gráfico para entender mejor sus perfiles únicos.
+            </p>
+            <div class="bg-white rounded-xl shadow-lg p-4 md:p-8">
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+                <div id="controls" class="flex flex-wrap justify-center gap-3 mt-8">
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <section id="documental" class="pt-20 -mt-16 bg-white p-8 rounded-xl shadow-lg transition-transform duration-300 hover:scale-105">
+                <h3 class="text-2xl font-bold mb-4 text-[#E07A5F]">
+                    <span class="mr-3 text-3xl">🎬</span>Documental
+                </h3>
+                <p class="mb-6 text-gray-600">
+                    Es una representación audiovisual de la realidad. Su objetivo es informar, educar o concienciar sobre un tema específico a través de una investigación y una narrativa estructurada, aunque no sea de ficción.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start"><span class="font-bold text-[#E07A5F] mr-2">✔</span> <strong>Enfoque en la realidad:</strong> Se basa en hechos, personas y eventos reales.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#E07A5F] mr-2">✔</span> <strong>Investigación profunda:</strong> Requiere un trabajo de campo y recopilación de datos verificables.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#E07A5F] mr-2">✔</span> <strong>Estructura narrativa:</strong> Aunque no es ficción, cuenta una historia con un principio, desarrollo y fin.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#E07A5F] mr-2">✔</span> <strong>Uso de recursos audiovisuales:</strong> Combina entrevistas, imágenes de archivo, grabaciones y narración.</li>
+                </ul>
+            </section>
+
+            <section id="coloquio" class="pt-20 -mt-16 bg-white p-8 rounded-xl shadow-lg transition-transform duration-300 hover:scale-105">
+                <h3 class="text-2xl font-bold mb-4 text-[#81B29A]">
+                    <span class="mr-3 text-3xl">💬</span>Coloquio
+                </h3>
+                <p class="mb-6 text-gray-600">
+                    Es una reunión, generalmente de carácter académico o profesional, donde un grupo reducido de especialistas debate sobre un tema muy concreto. El énfasis está en el diálogo y la interacción entre los participantes.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start"><span class="font-bold text-[#81B29A] mr-2">✔</span> <strong>Grupo de especialistas:</strong> Los participantes son expertos en la materia.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#81B29A] mr-2">✔</span> <strong>Carácter dialogado:</strong> Fomenta el debate y el intercambio de ideas, no solo la exposición.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#81B29A] mr-2">✔</span> <strong>Audiencia limitada:</strong> Suele ser un evento más pequeño e íntimo.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#81B29A] mr-2">✔</span> <strong>Alta interactividad:</strong> La participación de todos los asistentes es fundamental.</li>
+                </ul>
+            </section>
+
+            <section id="conferencia" class="pt-20 -mt-16 bg-white p-8 rounded-xl shadow-lg transition-transform duration-300 hover:scale-105">
+                <h3 class="text-2xl font-bold mb-4" style="color: #F2CC8F;">
+                    <span class="mr-3 text-3xl">👨‍🏫</span>Conferencia / Exposición
+                </h3>
+                <p class="mb-6 text-gray-600">
+                    Presentación oral realizada por uno o varios expertos ante un público. El objetivo principal es transmitir información, conocimientos o ideas de manera estructurada y didáctica sobre un tema determinado.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start"><span class="font-bold" style="color: #F2CC8F;" mr-2>✔</span> <strong>Unidireccionalidad:</strong> La comunicación fluye principalmente del ponente hacia la audiencia.</li>
+                    <li class="flex items-start"><span class="font-bold" style="color: #F2CC8F;" mr-2>✔</span> <strong>Estructura formal:</strong> Sigue un guion claro con introducción, desarrollo y conclusión.</li>
+                    <li class="flex items-start"><span class="font-bold" style="color: #F2CC8F;" mr-2>✔</span> <strong>Ponente experto:</strong> La figura central es un especialista reconocido en el tema.</li>
+                    <li class="flex items-start"><span class="font-bold" style="color: #F2CC8F;" mr-2>✔</span> <strong>Espacio para preguntas:</strong> Generalmente, se reserva un tiempo al final para la interacción con el público.</li>
+                </ul>
+            </section>
+            
+            <section id="congreso" class="pt-20 -mt-16 bg-white p-8 rounded-xl shadow-lg transition-transform duration-300 hover:scale-105">
+                <h3 class="text-2xl font-bold mb-4 text-[#3D405B]">
+                    <span class="mr-3 text-3xl">🏛️</span>Congreso
+                </h3>
+                <p class="mb-6 text-gray-600">
+                    Es un evento a gran escala que reúne a profesionales, investigadores o miembros de una organización. Se presentan y discuten avances y estudios a través de múltiples conferencias, paneles y talleres.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-start"><span class="font-bold text-[#3D405B] mr-2">✔</span> <strong>Gran escala:</strong> Implica una gran cantidad de asistentes y ponentes.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#3D405B] mr-2">✔</span> <strong>Múltiples sesiones:</strong> Se desarrollan varias actividades de forma simultánea.</li>
+                    <li class="flex items-start"><span class="font-bold text-[#3D405B] mr-2">✔</span> <strong>Periodicidad:</strong> Suelen celebrarse de forma regular (anual, bienal).</li>
+                    <li class="flex items-start"><span class="font-bold text-[#3D405B] mr-2">✔</span> <strong>Networking:</strong> Un objetivo clave es establecer contactos profesionales.</li>
+                </ul>
+            </section>
+
+        </div>
+    </main>
+    
+    <footer class="text-center p-6 mt-12 bg-[#3D405B] text-gray-300">
+        <p>Una aplicación interactiva para la exploración de la comunicación oral.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const data = {
+                labels: ['Formalidad', 'Interactividad', 'Nº de Ponentes', 'Tamaño Audiencia', 'Especialización Tema'],
+                datasets: [
+                    {
+                        label: 'Documental',
+                        data: [7, 2, 3, 10, 8],
+                        backgroundColor: 'rgba(224, 122, 95, 0.2)',
+                        borderColor: 'rgba(224, 122, 95, 1)',
+                        pointBackgroundColor: 'rgba(224, 122, 95, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(224, 122, 95, 1)',
+                        hidden: false
+                    },
+                    {
+                        label: 'Coloquio',
+                        data: [8, 9, 5, 3, 10],
+                        backgroundColor: 'rgba(129, 178, 154, 0.2)',
+                        borderColor: 'rgba(129, 178, 154, 1)',
+                        pointBackgroundColor: 'rgba(129, 178, 154, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(129, 178, 154, 1)',
+                        hidden: false
+                    },
+                    {
+                        label: 'Conferencia',
+                        data: [9, 4, 2, 7, 7],
+                        backgroundColor: 'rgba(242, 204, 143, 0.2)',
+                        borderColor: 'rgba(242, 204, 143, 1)',
+                        pointBackgroundColor: 'rgba(242, 204, 143, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(242, 204, 143, 1)',
+                        hidden: false
+                    },
+                    {
+                        label: 'Congreso',
+                        data: [10, 6, 10, 9, 9],
+                        backgroundColor: 'rgba(61, 64, 91, 0.2)',
+                        borderColor: 'rgba(61, 64, 91, 1)',
+                        pointBackgroundColor: 'rgba(61, 64, 91, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(61, 64, 91, 1)',
+                        hidden: false
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'radar',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#3D405B'
+                            },
+                            ticks: {
+                                backdropColor: 'rgba(255, 255, 255, 0.75)',
+                                color: '#6b7280',
+                                stepSize: 2
+                            },
+                            min: 0,
+                            max: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                },
+            };
+
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            const comparisonChart = new Chart(ctx, config);
+
+            const controlsContainer = document.getElementById('controls');
+            data.datasets.forEach((dataset, index) => {
+                const button = document.createElement('button');
+                button.textContent = dataset.label;
+                button.style.backgroundColor = dataset.borderColor;
+                button.style.color = 'white';
+                button.classList.add('px-4', 'py-2', 'rounded-full', 'font-semibold', 'transition-opacity', 'duration-300');
+                if (dataset.hidden) {
+                    button.classList.add('opacity-50');
+                }
+
+                button.onclick = () => {
+                    const meta = comparisonChart.getDatasetMeta(index);
+                    meta.hidden = !meta.hidden;
+                    button.classList.toggle('opacity-50');
+                    comparisonChart.update();
+                };
+                controlsContainer.appendChild(button);
+            });
+            
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.4
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active-link');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active-link');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
